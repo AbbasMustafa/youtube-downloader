@@ -1,0 +1,28 @@
+a.contact-bt {
+    color: black !important;
+    text-decoration: none;
+    background: white;
+    padding: 5px 20px 5px 20px;
+    border-radius: 20px;
+    font-weight: 500;
+    font-size: 19px;
+}
+i.loader-font {
+    font-size: 35px;
+}
+
+.font-35 {
+    font-size: 25px;
+    font-family: sans-serif;
+    font-weight: 700;
+    text-align: center;
+    text-transform: capitalize;
+}
+i.check-font {
+    font-size: 26px;
+    background: #0a3622;
+    color: #d1e7dd;
+    padding: 5px;
+    border-radius: 50%;
+    /* size: 115px; */
+}

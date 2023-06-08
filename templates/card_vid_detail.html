@@ -1,0 +1,77 @@
+<div class="card mb-3" id="card-div"
+  style="max-width: 700px; margin-top: 5% !important; margin-left: 25% !important;  margin-right: 5% !important; display: none;">
+  <div class="row g-0">
+    <div class="col-md-4">
+      <img src="data:image/png;base64,{{vid_thumbnail}}" class="img-fluid rounded-start" style="height:100% !important;"
+        alt="..." />
+    </div>
+    <div class="col-md-8">
+      <div class="card-body">
+        <h5 class="card-title">{{vid_title}}</h5>
+        <p class="card-text">
+          <small class="text-body-secondary">{{vid_duration}}</small>
+        </p>
+        <div class="card-body">
+          <div class="btn-group">
+            <button class="btn btn-secondary btn-md" type="button"
+              aria-expanded="false" onclick="choosed_mp4()">Download in Mp4</button>
+          </div>
+          <div class="btn-group">
+            <button class="btn btn-secondary btn-md" type="button" 
+              aria-expanded="false" onclick="choosed_mp3()">Download in Mp3</button>
+            {% comment %} <button class="btn btn-secondary btn-md dropdown-toggle" type="button"
+              data-bs-toggle="dropdown" aria-expanded="false">Small button</button>
+            <ul class="dropdown-menu">
+              {% for resolution in vid_resolutions %}
+              <li><a data-id='{{resolution.id}}' class="dropdown-item" onclick="download_file(this)">{{resolution.type}}
+                  {{resolution.res}}</a></li>
+              {% endfor %}
+            </ul> {% endcomment %}
+
+          </div>
+        </div>
+
+      </div>
+      <div class="card-body" style="display: none" id="vid_div_quality">
+        <div class="row">
+          <div class="col-md-8 col-8">
+            <select class="form-select" id="video_select" aria-label="Default select example">
+              <option selected hidden>Select Video Quality</option>
+              {% for resolution in vid_resoltuions %}
+                <option value={{resolution.id}}>{{resolution.quality}}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-md-4 col-4">
+            <div class="btn-group">
+              <button class="btn btn-secondary btn-md" onclick="video_download()" type="button" aria-expanded="false">
+                Download
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card-body" style="display: none" id="audio_div_quality">
+        <div class="row">
+          <div class="col-md-8 col-8">
+            <select class="form-select" id="audio_select" aria-label="Default select example">
+              <option selected hidden>Select Audio Quality</option>
+              {% for resolution in audio_resolutions %}
+                <option value={{resolution.id}}>{{resolution.quality}}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-md-4 col-4">
+            <div class="btn-group">
+              <button class="btn btn-secondary btn-md" onclick="audio_download()" type="button" aria-expanded="false">
+                Download
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+</div>

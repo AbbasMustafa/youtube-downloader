@@ -1,0 +1,192 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous" />
+    <link rel="stylesheet" href="{% static '/css/loader.css' %}">
+    <link rel="stylesheet" href="{% static '/css/style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.0.0/css/font-awesome.css" integrity="sha512-72McA95q/YhjwmWFMGe8RI3aZIMCTJWPBbV8iQY3jy1z9+bi6+jHnERuNrDPo/WGYEzzNs4WdHNyyEr/yXJ9pA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <title>Youtube Video Downloader</title>
+  </head>
+
+  <style></style>
+
+  <body>
+    <div class="loading" id="loading">Loading</div>
+    {% csrf_token %}
+    {% comment %} <nav class="navbar navbar-inner bg-body-tertiary">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">
+          <img src="{% static '/images/yt-logo.png' %}" alt="Logo" width="40" height="30" class="d-inline-block align-text-top" />
+          Vid Save
+        </a>
+      </div>
+    </nav> {% endcomment %}
+    <nav class="topnav navbar navbar-expand-lg navbar-dark bg-primary">
+      <div class="container">
+          <a class="navbar-brand" href="#">
+              <img loading="lazy" width="50" height="40" src="{% static '/images/yt-logo.png' %}" alt="">
+
+              YT Vids Downloader
+          </a>
+          <a class="nav-item d-block contact-bt" href="#" style="">Contact Us</a>
+      </div>
+
+    </nav>
+
+    <div class="container mt-5" style="display: none;" style="margin-bottom: -8% !important" id="progress_load">
+      <div class="row">
+          <div class="col-md-12 col-12">
+              <div class="alert alert-success font-35" id= "progress_text" role="alert">
+                  <i class="fa fa-spinner fa-spin loader-font"></i> &nbsp; Your Video Downloading is in Process, Please Wait Couple Of Seconds
+                </div>
+          </div>
+      </div>
+    </div>
+
+    <div class="row row-cols-lg-auto g-3 align-items-center" style="margin-top: 10% !important; margin-left: 25% !important; margin-right: 5% !important">
+      <div class="col col-lg-7">
+        <label class="visually-hidden" for="inlineFormInputGroupUsername">Enter Url</label>
+        <div class="input-group">
+          <!-- <div class="input-group-text">@</div> -->
+          <input type="text" class="form-control" id="video_link" placeholder="Place your link here" />
+        </div>
+      </div>
+
+      <div class="col-12">
+        <button class="btn btn-primary" onclick="vid_details()">Get video</button>
+      </div>
+    </div>
+    <div id="get_vid_det">
+
+    </div>
+    {% include "card_vid_detail.html" %}
+    
+    <script>
+      var loader_infer = document.getElementById("loading")
+      loader_infer.setAttribute("style", "display: none")
+
+      function vid_details(){
+        loader_infer.setAttribute("style", "display: block");
+        
+        $.ajaxSetup({
+          data: { csrfmiddlewaretoken: '{{ csrf_token }}' }
+        })
+        $.ajax({
+          type: 'POST',
+          url: "{% url 'get_vid_details' %}",
+          data: {
+            video_link: document.getElementById('video_link').value
+          },
+          success: (response) => {
+            
+            loader_infer.setAttribute("style", "display: none");
+            $('#get_vid_det').html(response)
+            document.getElementById('card-div').style.display = 'block'
+            console.log($('#get_vid_det'))
+          },
+          error: function (response) {
+            loader_infer.setAttribute("style", "display: none");
+            alert("Video requires login")
+            // alert(response["responseJSON"]["error"]);
+            // $('#loader').modal('hide');
+          }
+        })
+    }
+
+    function choosed_mp4(){
+      document.getElementById("audio_div_quality").style.display = "none";
+      document.getElementById("vid_div_quality").style.display = "block";
+    }
+    function choosed_mp3(){
+      document.getElementById("vid_div_quality").style.display = "none";
+      document.getElementById("audio_div_quality").style.display = "block";
+    }
+
+    function video_download(){
+      var vid_id = document.getElementById('video_select').value 
+      download_file(vid_id, "mp4", "video/mp4");
+    }
+    function audio_download(){
+      var aud_id = document.getElementById('audio_select').value 
+      download_file(aud_id, "mp3", "audio/mp3");
+    }
+
+
+    function download_file(id, type_download, mime){
+      document.getElementById("progress_load").style.display = "none"
+      document.getElementById("progress_text").innerHTML = document.getElementById("progress_text").innerHTML = '\n                  <i class="fa fa-spinner fa-spin loader-font" ></i> &nbsp; Your Video Downloading is in Process, Please Wait Couple Of Seconds\n          '
+      document.getElementById("progress_load").style.display = "block"
+      
+      $.ajaxSetup({
+        data: { csrfmiddlewaretoken: '{{ csrf_token }}' }
+      })
+      $.ajax({
+        type: 'POST',
+        url: "{% url 'download_video' %}",
+        data: {
+          tag: id,
+          download_type: type_download,
+          mimetype: mime,
+        },
+        beforeSend: function() {
+          document.getElementById("progress_load").style.display = "block";
+        },
+        success: (response) => {
+          var a = document.createElement("a");
+          document.body.appendChild(a);
+          a.style = "display: none";
+          var blob = base64ToBlob(response.data, response.mimetype);
+          var objectUrl = URL.createObjectURL(blob);
+          a.href = objectUrl;
+          a.download = response.filename;
+          a.click();
+          window.URL.revokeObjectURL(objectUrl);
+          a.remove(); 
+          document.getElementById("progress_text").innerHTML = '\n                  <i class="fa fa-check check-font" ></i> &nbsp; Downloading has finished, Thanks for downloading\n          '
+          
+        },
+        error: function (response) {
+          // alert(response["responseJSON"]["error"]);
+          // $('#loader').modal('hide');
+        }
+      });
+
+      
+      
+  
+    }
+
+    function base64ToBlob(base64, mimetype, slicesize) {
+      if (!window.atob || !window.Uint8Array) {
+          // The current browser doesn't have the atob function. Cannot continue
+          return null;
+      }
+      mimetype = mimetype || '';
+      slicesize = slicesize || 512;
+      var bytechars = atob(base64);
+      var bytearrays = [];
+      for (var offset = 0; offset < bytechars.length; offset += slicesize) {
+          var slice = bytechars.slice(offset, offset + slicesize);
+          var bytenums = new Array(slice.length);
+          for (var i = 0; i < slice.length; i++) {
+              bytenums[i] = slice.charCodeAt(i);
+          }
+          var bytearray = new Uint8Array(bytenums);
+          bytearrays[bytearrays.length] = bytearray;
+      }
+      return new Blob(bytearrays, {type: mimetype});
+};
+
+
+    </script>
+    
+  </body>
+</html>
